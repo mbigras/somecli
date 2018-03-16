@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+# somecli
+
+require 'optparse'
+require 'yaml'
+
+options = {}
+
+etc_config = File.join('etc', 'somecli')
+if File.exist? etc_config
+  options.merge! YAML.load_file(etc_config)
+end
+
+home_config = File.join(ENV['HOME'], '.somecli')
+if File.exist? home_config
+  options.merge! YAML.load_file(home_config)
+end
+
+current_working_directory_config = '.somecli'
+if File.exist? current_working_directory_config
+  options.merge! YAML.load_file(current_working_directory_config)
+end
+
+OptionParser.new do |opts|
+  opts.on("-s", "--[no-]switch") do |s|
+    options[:switch] = s
+  end
+  opts.on("-a", "--[no-]another-switch") do |as|
+    options[:'another-switch'] = as
+  end
+  opts.on("-y", "--[no-]yet-another-switch") do |yas|
+    options[:'yet-another-switch'] = yas
+  end
+  opts.on("-y", "--[no-]even-yet-another-switch") do |eyas|
+    options[:'even-yet-another-switch'] = eyas
+  end
+  opts.on("--flag FLAG") do |f|
+    options[:flag] = f
+  end
+end.parse!
+
+puts "ARGV=#{ARGV.inspect}"
+puts "options=#{options.inspect}"
+puts "ENV['cats']=#{ENV['cats'].inspect}"
+unless STDIN.tty?
+  puts "STDIN.read=#{STDIN.read.inspect}"
+end
+$stderr.puts "stderr: hello world!"
+$stdout.puts "stdout: hello world!"
+exit 0
