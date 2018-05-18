@@ -1,16 +1,28 @@
 #!/usr/bin/env ruby
 # somecli
 
+# requiring external code
+
 require 'optparse'
 require 'yaml'
 
+# defining variables
+# hash data structure
 options = {}
 
-etc_config = File.join('etc', 'somecli')
+# Portable OS path joins
+etc_config = File.join('/', 'etc', 'somecli')
+
+# if statements
+# checking the local filesystem
 if File.exist? etc_config
+
+  # YAML parser
+  # Hash manipulation
   options.merge! YAML.load_file(etc_config)
 end
 
+# Accessing environment variables
 home_config = File.join(ENV['HOME'], '.somecli')
 if File.exist? home_config
   options.merge! YAML.load_file(home_config)
@@ -21,6 +33,7 @@ if File.exist? current_working_directory_config
   options.merge! YAML.load_file(current_working_directory_config)
 end
 
+# Command line options parsing
 OptionParser.new do |opts|
   opts.on("-s", "--[no-]switch") do |s|
     options[:switch] = s
@@ -39,12 +52,23 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+# Access to command line arguments
 puts "ARGV=#{ARGV.inspect}"
 puts "options=#{options.inspect}"
 puts "ENV['cats']=#{ENV['cats'].inspect}"
+
+# Checking if reading from an interactive terminal
 unless STDIN.tty?
+
+  # Read from STDIN
   puts "STDIN.read=#{STDIN.read.inspect}"
 end
+
+# Access to standard error
 $stderr.puts "stderr: hello world!"
+
+# Access to standard output
 $stdout.puts "stdout: hello world!"
+
+# setting exit status
 exit 0
